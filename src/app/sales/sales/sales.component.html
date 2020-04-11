@@ -1,0 +1,157 @@
+<div [@routerTransition]>
+  <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+  <div class="row" [hidden]="operation != 'view'">
+    <div class="col col-sm-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          {{'Sales' | translate}} <button class="btn btn-sm pull-right btn-success" (click)="open()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+            <thead id="table">
+              <tr>
+                <th class="text-center">{{'Customer Name' | translate}}</th>
+                <th class="text-center">{{'Customer Number' | translate}}</th>
+                <th class="text-center">  {{'Status' | translate}}</th>
+                <th class="text-center">{{'Action' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let _item of list">
+                <td class="text-center">{{ _item.CustomerName }}</td>
+
+                <td class="text-center">{{ _item.CustomerNumber }}</td>
+                <td class="text-center">{{ _item.StatusName }}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-success" (click)="open(_item)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                  &nbsp; &nbsp;<button
+                    class="btn btn-sm btn-danger"
+                    mwlConfirmationPopover
+                    popoverTitle="Confirm Delete ?"
+                    (confirm)="delete(_item)"
+                    cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>"
+                    confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>"
+                  >
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save()" [hidden]="operation == 'view'" novalidate>
+    <div class="col col-sm-12" *ngIf="item">
+      <div class="card mb-3">
+        <div class="card-header">
+          <span [hidden]="operation != 'add'">  {{'Add New' | translate}}</span> <span [hidden]="operation != 'edit'">Edit {{ item?.Name }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+          
+            <div class="col-xl-6">
+              <label>{{'Customer Name' | translate}}<span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #CustomerName="ngModel"
+                  name="CustomerName"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{ patterns.Alphanumeric }}"
+                  [(ngModel)]="item.CustomerName"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="CustomerName.invalid && (CustomerName.dirty || CustomerName.touched)" class="alert alert-danger">
+                <div *ngIf="CustomerName.errors['required']">  {{'CustomerName is required.' | translate}}</div>
+                <div *ngIf="CustomerName.errors['pattern']">  {{'CustomerName is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>{{'Customer Number' | translate}}<span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #CustomerNumber="ngModel"
+                  name="CustomerNumber"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{ patterns.Number }}"
+                  [(ngModel)]="item.CustomerNumber"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="CustomerNumber.invalid && (CustomerNumber.dirty || CustomerNumber.touched)" class="alert alert-danger">
+                <div *ngIf="CustomerNumber.errors['required']">  {{'CustomerNumber is required.' | translate}}</div>
+                <div *ngIf="CustomerNumber.errors['pattern']">  {{'CustomerNumber is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Customer URL' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #CustomerUrl="ngModel"
+                  name="CustomerUrl"
+                  class="form-control"
+                  type="text"
+                  required
+                  [(ngModel)]="item.CustomerUrl"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="CustomerUrl.invalid && (CustomerUrl.dirty || CustomerUrl.touched)" class="alert alert-danger">
+                <div *ngIf="CustomerUrl.errors['required']">{{'CustomerUrl is required.' | translate}}</div>
+                <div *ngIf="CustomerUrl.errors['pattern']">{{'CustomerUrl is not valid.' | translate}}</div>
+              </div>
+            </div>
+         
+            <div class="col-xl-6">
+              <label>{{'Status' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                  <angular2-multiselect 
+                    name="Status"
+                    #Status="ngModel"
+                    [data]="Statuses" 
+                    [(ngModel)]="selectedStatuses"
+                    [settings]="StatusesSettings"                    
+                  >
+                  </angular2-multiselect>
+              </div>
+             <div *ngIf="Status.invalid && (Status.dirty || Status.touched)" class="alert alert-danger">
+                                    <div *ngIf="Status.errors.required">
+                                      Status is required.
+                                    </div>
+                                    
+                                </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Description' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+               
+                <textarea #Description="ngModel" name="Description" class="form-control" type="text" required [(ngModel)]="item.Description"
+                autofocus ></textarea>
+              </div>
+              <div *ngIf="Description.invalid && (Description.dirty || Description.touched)" class="alert alert-danger">
+                <div *ngIf="Description.errors['required']">{{'Description is required.' | translate}}</div>
+                <div *ngIf="Description.errors['pattern']">{{'Description is not valid.' | translate}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-right">
+            <button type="button" class="btn btn-default" (click)="back()">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}
+            </button>
+            &nbsp; &nbsp;<button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">
+                {{'Save' | translate}} <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

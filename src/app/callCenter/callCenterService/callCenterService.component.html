@@ -1,0 +1,245 @@
+<div [@routerTransition]>
+    <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+
+    <div class="row" [hidden]="operation!='view'">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                      {{'Call Center' | translate}}
+                    <button class="btn btn-sm pull-right btn-success" (click)="open()">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <label>{{'Customers' | translate}}</label>
+                            <div class="form-group">
+                                <angular2-multiselect
+                                 [data]="Cutstomers" 
+                                 [(ngModel)]="selectedItems" 
+                                 [settings]="settings" 
+                                 (onSelect)="onItemSelect($event)"
+                                 (onDeSelect)="OnItemDeSelect($event)" >
+                                </angular2-multiselect>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>  {{'Phone Number' | translate}}</label>
+                            <div class="form-group">
+                                <input 
+                                   #Mobile="ngModel" 
+                                   name="Mobile" 
+                                   class="form-control" 
+                                   type="text"  
+                                   pattern="{{patterns.Alphanumeric}}" 
+                                   [(ngModel)]="searchData.Mobile"
+                                />    
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>{{'Date From' |translate}}
+                                <!--<span class="text-danger">*</span>-->: </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input 
+                                    class="form-control" 
+                                    placeholder="yyyy-mm-dd" 
+                                    name="dp" 
+                                    [(ngModel)]="searchData.DateFrom" 
+                                    ngbDatepicker  
+                                    #dd="ngbDatepicker"
+                                    FromDT="ngModel" />
+                                    <button class="input-group-addon" (click)="dd.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                                <!--<div *ngIf="FromDT.invalid && (FromDT.dirty || FromDT.touched)" class="alert alert-danger">
+                                    <div *ngIf="FromDT.errors['required']">Date From is required.</div>
+                                </div>-->
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                                <label>{{'Date To' | translate}}
+                                    <!--<span class="text-danger">*</span>-->: </label>
+                                <div class="form-group">
+                                    <div class="input-group datepicker-input">
+                                        <input 
+                                            class="form-control" 
+                                            placeholder="yyyy-mm-dd" 
+                                            name="dp" 
+                                            [(ngModel)]="searchData.DateTo" 
+                                            ngbDatepicker  
+                                            #ddt="ngbDatepicker"
+                                            #ToDT="ngModel" 
+                                        />
+                                        <button class="input-group-addon" (click)="ddt.toggle()" type="button">
+                                            <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                            <span class="fa fa-calendar"></span>
+                                        </button>
+                                    </div>
+                                    <!--<div *ngIf="ToDT.invalid && (ToDT.dirty || ToDT.touched)" class="alert alert-danger">
+                                        <div *ngIf="ToDT.errors['required']">Date To is required.</div>
+                                    </div>-->
+                                </div>
+                        </div>
+                        <div class="col-xl-4" *ngIf="!(uType==2)">
+                            <label>
+                                {{'state' |translate}}
+                             </label>
+                            <div style="padding-top: 5px" class="form-group">
+                                <label class="">
+                                                    <input type="radio" name="options" id="option1" value="1" 
+                                                    [(ngModel)]="searchData.IsDelivered"> {{'Deliveries' | translate}}
+                                </label>
+                                &nbsp;
+                                <label class="">
+                                                    <input type="radio" name="options" id="option2" value="2" 
+                                                    [(ngModel)]="searchData.IsDelivered">   {{'Returns' | translate}}
+                                </label>
+                                &nbsp;
+                                <label class="">
+                                                    <input type="radio" name="options" id="option3" value="0" 
+                                                    [(ngModel)]="searchData.IsDelivered">   {{'Both' | translate}}
+                                </label>
+                                &nbsp;
+                            </div>          
+                        </div>    
+                        <div class="col-xl-4" style="margin-top: 32px;">
+                            <button class="btn btn-success" (click)="Search()" type="submit">{{'Submit' | translate}} </button>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="">
+                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+                            <thead id="table">
+                                <tr>
+                                    <th class="text-center">{{'Shipment Code' | translate}}</th>
+                                    <th class="text-center">{{'Customer Name' | translate}}</th>
+                                    <th class="text-center">{{'Customer Mobile' | translate}}</th>
+                                    <th class="text-center">{{'Shipment Value' | translate}}</th>
+                                    <th class="text-center">{{'Status' | translate}}</th>
+                                    <th class="text-center">{{'Action' |translate}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let _item of callCenterGrid">
+                                    <td class="text-center">{{_item.Shipments_Code}}</td>
+                                    <td class="text-center">{{ _item.Customers_Name }}</td>
+                                    <td class="text-center">{{ _item.Customers_Mobile }}</td>
+                                    <td class="text-center">{{ _item.Shipments_Value }}</td>
+                                    <td class="text-center">{{ _item.IsDelivered ?('Deliveries' | translate):('Returns' | translate) }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-success" (click)="open(_item)">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save();" [hidden]="operation=='view'" novalidate>
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span [hidden]="operation!='add'">  {{'Add New' | translate}} </span>
+                    <span [hidden]="operation!='edit'">{{'Edit' | translate}} {{item?.Code}}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <label>{{'Shipment Code' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Code="ngModel" [disabled]="true" name="Code" class="form-control" type="text" required  [(ngModel)]="item.Code"/>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>{{'Customer Name' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Customers_Name="ngModel" [disabled]="true" name="Customers_Name" class="form-control" type="text" required  [(ngModel)]="item.Customers_Name"/>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>{{'Customer Mobile' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Customer_Mobile="ngModel" [disabled]="true" name="Customer_Mobile" class="form-control" type="text" required  [(ngModel)]="item.Customers_Mobile"/>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>  {{'Notes' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Notes="ngModel" name="Notes" class="form-control" type="text" required  [(ngModel)]="item.Notes"
+                                    autofocus />
+                            </div>
+                            <div *ngIf="Notes.invalid && (Notes.dirty || Notes.touched)" class="alert alert-danger">
+                                <div *ngIf="Notes.errors['required']">
+                                      {{'Notes is required.' | translate}}
+                                </div>
+                                <div *ngIf="Notes.errors['pattern']">
+                                      {{'Notes is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6" *ngIf="!(uType==2)">
+                            <label>{{'Status Date' |translate}}
+                                <!--<span class="text-danger">*</span>-->: </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input 
+                                    class="form-control" 
+                                    placeholder="yyyy-mm-dd" 
+                                    name="ST" 
+                                    [(ngModel)]="item.StatusDate" 
+                                    ngbDatepicker  
+                                    #ST="ngbDatepicker"
+                                    StatusDate="ngModel" />
+                                    <button class="input-group-addon" (click)="ST.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                                <!-- <div *ngIf="ST.invalid && (ST.dirty || ST.touched)" class="alert alert-danger">
+                                    <div *ngIf="ST.errors['required']">Date From is required.</div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>{{'Status' | translate}}</label>
+                            <div class="form-group">
+                                <angular2-multiselect
+                                 [data]="statusList" 
+                                 [(ngModel)]="selectedStatus" 
+                                 [settings]="statusListsettings"
+                                 #Status="ngModel" 
+                                 name="Status" 
+                                
+                                 (onSelect)="onStatusSelect($event)"
+                                 (onDeSelect)="OnStatusDeSelect($event)" 
+                               >
+                                </angular2-multiselect>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" (click)="back();">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}</button>
+                        <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">  {{'Save' | translate}}
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

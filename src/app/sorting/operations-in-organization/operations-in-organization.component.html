@@ -1,0 +1,69 @@
+<div [@routerTransition]>
+    <!--<app-page-header [heading]="'Makes'" [icon]="'fa-car'"></app-page-header>-->
+    <form name="detailsForm" #detailsForm="ngForm" class="row" novalidate>
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                      
+                        <div class="col-xl-3">
+                            <label>Orgnization Name</label>
+                            <div class="form-group">
+                                <input #NameEn="ngModel" name="NameEn" class="form-control" type="text"  pattern="{{patterns.Alphanumeric}}"
+                                 [(ngModel)]="item"
+                                    autofocus />
+                            </div>
+                        </div>
+                        
+                      
+                  
+                        <div class="col-xl-3">
+                             <div class="text-right">
+                            <button style="margin-top: 30px"   class="btn btn-success pull-right" type="button" (click)="search()">search
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        </div>
+                       
+                    </div>
+                </div>
+              
+
+
+            </div>
+        </div>
+    </form>
+    <div class="card">
+
+    <div id="user"  class="popup card-body">
+        <div class="details">
+                <div class="">
+                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+                            <thead id="table">
+                                <tr>
+                                        <th class="text-center">{{'Code' | translate}}</th>
+                                        <th class="text-center">  {{'  Name English' | translate}}</th>
+                                        <th class="text-center">  {{'Name Arbic' | translate}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let _item of list">
+                                    <td class="text-center">{{_item.Code}}</td>
+                                    <td class="text-center">{{ _item.ShipmentValue }}</td>
+                                
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+  
+        </div>
+   </div>
+    <div class="card-footer">
+                    <div class="text-right">
+                        <button class="btn btn-success" type="button" (click)="print()">  {{'Print' | translate}}
+                            <i class="fa fa-print" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+</div>
+</div>

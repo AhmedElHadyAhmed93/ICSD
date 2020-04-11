@@ -1,0 +1,89 @@
+<div [@routerTransition]>
+  <form name="detailsForm" #detailsForm="ngForm" class="row panel panel-body" (ngSubmit)="search()" novalidate id="collapseExample">
+    <div class="col-xl-4">
+      <label>{{'Courier' | translate}}</label>
+      <angular2-multiselect
+        name="Courier"
+        #Courier="ngModel"
+        required
+        [data]="CourierLst"
+        [(ngModel)]="selectedCouriers"
+        [settings]="CourierSettings"
+      >
+      </angular2-multiselect>
+    </div>
+    <div class="col-xl-4">
+      <label>{{'Customer' | translate}}</label>
+      <angular2-multiselect
+        name="Customer"
+        #Customer="ngModel"
+        required
+        [data]="CustomerLst"
+        [(ngModel)]="selectedCustomers"
+        [settings]="CustomerSettings"
+        (onSelect)="onItemSelect($event)"
+        (onSelectAll)="onSelectAll($event)"
+      >
+      </angular2-multiselect>
+    </div>
+    <div class="col-xl-4">
+      <br />
+      <button
+        class="btn btn-success"
+        [disabled]="detailsForm.invalid"
+        type="submit"
+        data-toggle="collapse"
+        href="#collapseExample"
+        role="button"
+        aria-expanded="true"
+        aria-controls="collapseExample"
+      >
+        {{'Search' | translate}} <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="col-xl-4">
+      <label>  {{'Transaction Date' | translate}} <span class="text-danger">*</span>: </label>
+      <div class="form-group">
+        <div class="input-group datepicker-input">
+          <input
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="TransactionDt"
+            [(ngModel)]="transSC.TransactionDt"
+            #TransactionDt="ngModel"
+            readonly
+          />
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4">
+      <fieldset class="form-group">
+        <label>  {{'Status' | translate}}</label>
+        <div>
+          <label class="radio-inline">
+            <input type="radio" name="Status" id="optionsRadiosInline1" [(ngModel)]="IsDeliver" [value]="true" />{{'Receive' | translate}}
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="Status" id="optionsRadiosInline2" [(ngModel)]="IsDeliver" [value]="false" />{{'Return' |translate}}
+          </label>
+        </div>
+      </fieldset>
+    </div>
+  </form>
+  <div class="row"><app-transaction-list [isDelivered]="IsDeliver" [list]="list"></app-transaction-list></div>
+  <div class="pull-right">
+    <button
+      class="btn btn-success"
+      [disabled]="!list"
+      type="submit"
+      (click)="save()"
+      data-toggle="collapse"
+      href="#collapseExample"
+      role="button"
+      aria-expanded="true"
+      aria-controls="collapseExample"
+    >
+        {{'Save' | translate}} <i class="fa fa-save" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

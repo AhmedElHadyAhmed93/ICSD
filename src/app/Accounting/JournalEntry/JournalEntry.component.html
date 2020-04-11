@@ -1,0 +1,211 @@
+<div [@routerTransition]>
+    <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+    <div class="row" [hidden]="operation!='view'">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    {{'JournalEntry' | translate}}
+                    <button class="btn btn-sm pull-right btn-success" (click)="open()">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="">
+                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+                            <thead id="table">
+                                <tr>
+                                    <th class="text-center">{{'Resource Type' | translate}}</th>
+                                    <th class="text-center"> {{'Code' | translate}}</th>
+                                    <!-- <th class="text-center"> {{'Reverse Date' | translate}}</th> -->
+                                    <!-- <th class="text-center">{{'Posting Date' | translate}}</th> -->
+                                    <th class="text-center">{{'Action' | translate}}</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let _item of list">
+                                    <td class="text-center">{{_item.ResourceType}}</td>
+                                    <td class="text-center">{{_item.Code}}</td>
+                                    <!-- <td class="text-center">{{_item.ReverseDate?.day}}/{{_item.ReverseDate.month}}/{{_item.ReverseDate.year}}</td> -->
+                                    <!-- <td class="text-center">{{_item.PostingDt?.day}}/{{_item.PostingDt.month}}/{{_item.PostingDt.year}}</td> -->
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-success" (click)="open(_item)">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </button>
+                                        &nbsp;&nbsp;
+                                        <button class="btn btn-sm btn-danger" mwlConfirmationPopover popoverTitle="Confirm Delete ?" (confirm)="delete(_item)" cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>" confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save();" [hidden]="operation=='view'" novalidate>
+        <div class="col col-sm-12" *ngIf="item">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span [hidden]="operation!='add'">  {{'Add New' | translate}} </span>
+                    <span [hidden]="operation!='edit'">Edit {{item?.Code}}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <label>{{'Code' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Code="ngModel" name="Code" class="form-control" type="text" required pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Code" autofocus />
+                            </div>
+                            <div *ngIf="Code.invalid && (Code.dirty || Code.touched)" class="alert alert-danger">
+                                <div *ngIf="Code.errors['required']">
+                                    {{'Code is required.' | translate}}
+                                </div>
+                                <div *ngIf="Code.errors['pattern']">
+                                    {{'Code is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label> {{'Description' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Description="ngModel" name="Description" class="form-control" type="text" required pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Description" autofocus />
+                            </div>
+                            <div *ngIf="Description.invalid && (Description.dirty || Description.touched)" class="alert alert-danger">
+                                <div *ngIf="Description.errors['required']">
+                                    {{'Description is required.' | translate}}
+                                </div>
+                                <div *ngIf="Description.errors['pattern']">
+                                    {{'Description is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>{{'Reverse Date' | translate}} <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input class="form-control" placeholder="yyyy-mm-dd" name="ReverseDate" [(ngModel)]="item.ReverseDate" ngbDatepicker required #d1="ngbDatepicker" #ReverseDate="ngModel" />
+                                    <button class="input-group-addon" (click)="d1.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                                <div *ngIf="ReverseDate.invalid && (ReverseDate.dirty || ReverseDate.touched)" class="alert alert-danger">
+                                    <div *ngIf="ReverseDate.errors['required']"> {{'Collection Date is required.' | translate}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-12">
+                        <label>{{'Journal Entry Line' | translate}}<span class="text-danger">*</span>:</label>
+                        <div id="table" class="table-editable">
+                            <span class="table-add float-right mb-3 mr-2">
+                                        <button class="btn btn-sm pull-right btn-success" type="button" (click)="add()">
+                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                            </button>
+                                </span>
+                            <table class="table table-bordered table-responsive-md table-striped text-center">
+                                <tr>
+                                    <th class="text-center"> {{'Code' | translate}}</th>
+                                    <th class="text-center"> {{'Main Account' | translate}}</th>
+                                    <th class="text-center"> {{'Branch Account' | translate}}</th>
+                                    <th class="text-center"> {{'Amount' | translate}}</th>
+                                    <th class="text-center"> {{'Debit' | translate}}</th>
+                                    <th class="text-center"> {{'Credit' | translate}}</th>
+                                    <th class="text-center"> {{'Describtion' | translate}}</th>
+                                    <th class="text-center"> {{'Delete' | translate}}</th>
+                                </tr>
+                                <tr *ngFor="let _Product of _JournalEntryLines; let ID = index">
+                                    <td class=text-center>
+                                        <input [name]="'Code'+ID" class="form-control"
+                                         [(ngModel)]="_Product.Code" 
+                                         type="number" 
+                                        />
+                                    </td>
+                                    <td class=text-center >
+                                        <angular2-multiselect 
+                                        [name]="'MainAccount'+ID" 
+                                        #index ="ngModel" 
+                                        [data]="MainAccounts" 
+                                        [(ngModel)]="_Product.SelectedMainAccount" 
+                                        [settings]="settings" 
+                                        (onSelect)="changeValue($event, 'MainAccounts', _Product)" 
+                                        (onDeSelect)="updateList($event, 'MainAccounts', _Product)">
+                                        </angular2-multiselect>
+                                        <div
+                                        *ngIf="index.invalid && (index.dirty || index.touched)"class="alert alert-danger">
+                                        <div *ngIf="index.errors['required']">
+                                            {{'Item is required.' | translate}}
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td class=text-center>
+                                        <angular2-multiselect 
+                                        [name]="'BranchAccount'+ID" 
+                                        [data]="_Product.BranchAccountList" 
+                                        [(ngModel)]="_Product.SelectedBranchAccount" 
+                                        [settings]="settings" 
+                                        (onSelect)="changeValue(_Product.ID, 'BranchAccount', _Product)"
+                                        (onDeSelect)="updateList(_Product.ID, 'BranchAccount', _Product)">
+                                            >
+                                            <!-- (onSelect)="changeValue(_Product.ID, 'ZoneList', $event)"
+                                          (onDeSelect)="updateList(_Product.ID, 'ZoneList', $event)"
+                                     -->
+                                        </angular2-multiselect>
+                                    </td>
+                                    <td class=text-center>
+                                        <input [name]="'Amount'+ID" 
+                                        class="form-control" 
+                                        (keyup)="changeValue(_Product.ID, 'Weight', $event)" 
+                                        (blur)="updateList(_Product.ID, 'Weight', $event)" 
+                                        [(ngModel)]="_Product.Amount" type="number" />
+                                    </td>
+                                    <td class=text-center>
+                                        <input type="radio" 
+                                        [name]="'options1'+ID" 
+                                        [value]="1" [(ngModel)]="_Product.AmountType"
+                                         class="form-control" 
+                                         (keyup)="changeValue(_Product.ID, 'AmountType', $event)"
+                                          (blur)="updateList(_Product.ID, 'AmountType', $event)">
+                                    </td>
+                                    <td class=text-center>
+                                        <input type="radio" 
+                                        [name]="'options1'+ID" 
+                                        [value]="2" 
+                                        [(ngModel)]="_Product.AmountType" 
+                                        class="form-control" 
+                                        (keyup)="changeValue(_Product.ID, 'AmountType', $event)" 
+                                        (blur)="updateList(_Product.ID, 'AmountType', $event)">
+                                    </td>
+                                    <td class=text-center>
+                                        <input type="text" 
+                                        [name]="'Description'+ID" [value]="2" [(ngModel)]="_Product.Description" class="form-control" (keyup)="changeValue(_Product.ID, 'Description', $event)" (blur)="updateList(_Product.ID, 'Description', $event)">
+                                    </td>
+                                    <td class=text-center>
+                                        <span class="table-remove">
+                                        <button type="button"  class="my-0 my-0 btn btn-danger btn-rounded btn-sm" (click)="remove(ID)">{{'Delete' | translate}}</button>
+                                      </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" (click)="back();">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-success" [disabled]="detailsForm.invalid || IsNotValid" type="submit"> {{'Save' | translate}}
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,103 @@
+<div [@routerTransition]>
+  <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+
+  <div class="row" [hidden]="operation != 'view'">
+    <div class="col col-sm-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          {{'ZoneCity' |translate }} <button class="btn btn-sm pull-right btn-success" (click)="open()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-body">
+         
+          <div class="">
+            <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+              <thead id="table">
+                <tr>
+                  <th class="text-center">{{'Code' | translate}}</th>
+                  <th class="text-center">  {{'Name English' | translate}}</th>
+                  <th class="text-center">  {{'Name Arbic' | translate}}</th>
+                  <th class="text-center">{{'Action' | translate}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let _item of Zones">
+                  <td class="text-center">{{ _item.Code }}</td>
+                  <td class="text-center">{{ _item.NameEn }}</td>
+                  <td class="text-center">{{ _item.NameAr }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-success" (click)="open(_item)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                    &nbsp; &nbsp;<button
+                      class="btn btn-sm btn-danger"
+                      mwlConfirmationPopover
+                      popoverTitle="Confirm Delete ?"
+                      (confirm)="delete(_item)"
+                      cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>"
+                      confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>"
+                    >
+                      <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save()" [hidden]="operation == 'view'" novalidate>
+    <div class="col col-sm-12" *ngIf="item">
+      <div class="card mb-3">
+        <div class="card-header">
+          <span [hidden]="operation != 'add'">  {{'Add New' | translate}} </span> <span [hidden]="operation != 'edit'">Edit {{ item?.Name }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-6">
+              <label>{{'Zone' | translate}}</label>
+              <div class="form-group">
+                <angular2-multiselect 
+                name="Zones"
+                [data]="Zones" 
+                [(ngModel)]="selectedZones"
+                [settings]="settingsZones"
+                (onSelect)="onZoneSelect($event)"
+                (onDeSelect)="OnZoneDeSelect($event)">
+                </angular2-multiselect>
+                
+            </div>
+            </div>
+            <div class="col-xl-6">
+              <label>{{'Cities' | translate}}</label>
+              <div class="form-group">
+                <angular2-multiselect 
+                name="Cities"
+                [data]="Cities" 
+                [(ngModel)]="selectedZoneCites"
+                [settings]="settingsZoneCites">
+                </angular2-multiselect>
+                
+                <!-- (onSelect)="onZoneCitesSelect($event)"
+                    (onDeSelect)="OnZoneCitesDeSelect($event)"
+                     (onSelectAll)="onSelectAllZoneCites($event)" 
+                     (onDeSelectAll)="onDeSelectAllZoneCites($event)" -->
+            </div>
+
+              
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-right">
+            <button type="button" class="btn btn-default" (click)="back()">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}
+            </button>&nbsp; &nbsp;
+            <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">
+                {{'Save' | translate}} <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

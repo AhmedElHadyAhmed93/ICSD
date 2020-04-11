@@ -1,0 +1,172 @@
+<div [@routerTransition]>
+  <div class="row" [hidden]="operation != 'view'"><app-shipment-list [list]="list" (notify)="open($event)"></app-shipment-list></div>
+  <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save()" [hidden]="operation == 'view'" novalidate>
+    <div class="col col-sm-12" *ngIf="item">
+      <div class="card mb-3">
+        <div class="card-header">
+          <span [hidden]="operation != 'add'">  {{'Add New' | translate}} </span> <span [hidden]="operation != 'edit'">{{'Edit' | translate}} {{ item?.Code }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-6">
+              <label>{{'Code' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input #Code="ngModel" name="Code" class="form-control" type="text" [(ngModel)]="item.Code" readonly />
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label for="Organization">{{'Organization' | translate}} <span class="text-danger">*</span>:</label>
+              <angular2-multiselect
+                name="Organization"
+                #Organization="ngModel"
+                required
+                [data]="orgLst"
+                [(ngModel)]="Organizations"
+                [settings]="Orgsettings"
+              >
+              </angular2-multiselect>
+              <div *ngIf="Organization.invalid && (Organization.dirty || Organization.touched)" class="alert alert-danger">
+                <div *ngIf="Organization.errors['required']">  {{'Organization is required.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label for="Vendor">{{'Vendor' | translate}} <span class="text-danger">*</span>:</label>
+              <angular2-multiselect
+                name="Vendor"
+                #Vendor="ngModel"
+                required
+                [data]="vendorLst"
+                [(ngModel)]="Vendors"
+                [settings]="Vendorsettings"
+              >
+              </angular2-multiselect>
+              <div *ngIf="Vendor.invalid && (Vendor.dirty || Vendor.touched)" class="alert alert-danger">
+                <div *ngIf="Vendor.errors['required']">  {{'Vendor is required.' | translate}}</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6">
+              <label for="Customer">{{'Customer' | translate}} <span class="text-danger">*</span>:</label>
+              <angular2-multiselect
+                name="Customer"
+                #Customer="ngModel"
+                required
+                [data]="customerLst"
+                [(ngModel)]="Customers"
+                [settings]="Custsettings"
+                (onSelect)="selectedItem($event)"
+              >
+              </angular2-multiselect>
+              <div *ngIf="Customer.invalid && (Customer.dirty || Customer.touched)" class="alert alert-danger">
+                <div *ngIf="Customer.errors['required']">  {{'Customer is required.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Address' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input #Address="ngModel" name="Address" class="form-control" type="text" [(ngModel)]="item.Address" readonly />
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label for="Currency">{{'Currency' | translate}} <span class="text-danger">*</span>:</label>
+              <angular2-multiselect
+                name="Currencies"
+                #Currency="ngModel"
+                required
+                [data]="currencyLst"
+                [(ngModel)]="Currencies"
+                [settings]="Currencysettings"
+              >
+              </angular2-multiselect>
+              <div *ngIf="Currency.invalid && (Currency.dirty || Currency.touched)" class="alert alert-danger">
+                <div *ngIf="Currency.errors['required']">  {{'Currency is required.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label for="Pay">  {{'Payment Methode' | translate}} <span class="text-danger">*</span>:</label>
+              <angular2-multiselect
+                name="pay"
+                #pay="ngModel"
+                required
+                [data]="payLst"
+                [(ngModel)]="PaymentMethodes"
+                [settings]="paysettings"
+              >
+              </angular2-multiselect>
+              <div *ngIf="pay.invalid && (pay.dirty || pay.touched)" class="alert alert-danger">
+                <div *ngIf="pay.errors['required']">  {{' Payment Methode is required.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Shipment Value' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #ShipmentValue="ngModel"
+                  name="ShipmentValue"
+                  class="form-control"
+                  type="number"
+                  required
+                  pattern="{{ patterns.Decimal }}"
+                  [(ngModel)]="item.ShipmentValue"
+                />
+              </div>
+              <div *ngIf="ShipmentValue.invalid && (ShipmentValue.dirty || ShipmentValue.touched)" class="alert alert-danger">
+                <div *ngIf="ShipmentValue.errors['required']">  {{'Shipment Value is required.' | translate}}</div>
+                <div *ngIf="ShipmentValue.errors['pattern']">  {{'Shipment Value is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Include shipping' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                type="checkbox"
+                [checked]="item.IncludeShipping"
+                (change)="item.IncludeShipping = !item.IncludeShipping"/>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>{{'Shipment Date' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <div class="input-group datepicker-input">
+                  <input
+                    class="form-control"
+                    placeholder="yyyy-mm-dd"
+                    name="dp"
+                    [(ngModel)]="item.ShipmentDt"
+                    ngbDatepicker
+                    required
+                    #d="ngbDatepicker"
+                    #ShipmentDt="ngModel"
+                  />
+                  <button class="input-group-addon" (click)="d.toggle()" type="button">
+                    <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                    <span class="fa fa-calendar"></span>
+                  </button>
+                </div>
+                <div *ngIf="ShipmentDt.invalid && (ShipmentDt.dirty || ShipmentDt.touched)" class="alert alert-danger">
+                  <div *ngIf="ShipmentDt.errors['required']">  {{'Shipment Date is required.' | translate}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-12">
+              <label>  {{'Notes' | translate}}: </label>
+              <div class="form-group">
+                <textarea #Notes="ngModel" name="Notes" class="form-control" type="text" [(ngModel)]="item.Notes" rows="3"> </textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-right">
+            <button type="button" class="btn btn-default" (click)="back()">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}
+            </button>
+            &nbsp; &nbsp;   <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">
+                {{'Save' | translate}} <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,103 @@
+<div [@routerTransition]>
+   
+       
+
+    <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save();"  novalidate>
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span>{{ 'Add Information To Shipment' | translate }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <label>{{'Code' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Code="ngModel"  name="Code" class="form-control" type="text" required pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Code"
+                                (blur)="getCustomerInfo(item.Code)"   autofocus />
+                            </div>
+                            <div *ngIf="Code.invalid && (Code.dirty || Code.touched)" class="alert alert-danger">
+                                <span *ngIf="Code.errors.required">
+                                    {{'   Code is required.' | translate}}
+                                </span>
+                                <span *ngIf="Code.errors.pattern">
+                                    {{' Code is not valid.' | translate}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>  {{'  Name English' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #NameEn="ngModel" disabled name="NameEn" class="form-control" type="text" required  [(ngModel)]="item.NameEn"
+                                    autofocus />
+                            </div>
+                            <div *ngIf="NameEn.invalid && (NameEn.dirty || NameEn.touched)" class="alert alert-danger">
+                                <div *ngIf="NameEn.errors.required">
+                                      {{'NameEn is required.' | translate}}
+                                </div>
+                                <div *ngIf="NameEn.errors.pattern">
+                                      {{'NameEn is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>  {{'Phone Number' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Mobile="ngModel" disabled name="Mobile" class="form-control" type="text" required pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Mobile"
+                                    autofocus />
+                            </div>
+                            <div *ngIf="Mobile.invalid && (Mobile.dirty || Mobile.touched)" class="alert alert-danger">
+                                <div *ngIf="Mobile.errors.required">
+                                      {{'Mobile is required.' | translate}}
+                                </div>
+                                <div *ngIf="Mobile.errors.pattern">
+                                      {{'Mobile is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <label>  {{'Address' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input #Address="ngModel" name="Address" class="form-control" type="text" disabled required pattern="{{patterns.TextAr}}" [(ngModel)]="item.Address"
+                                    autofocus />
+                            </div>
+                            <div *ngIf="Address.invalid && (Address.dirty || Address.touched)" class="alert alert-danger">
+                                <div *ngIf="Address.errors.required">
+                                      {{'Address is required.' | translate}}
+                                </div>
+                                <div *ngIf="Address.errors.pattern">
+                                      {{'Address is not valid.' | translate}}
+                                </div>
+                            </div>
+                        </div>                            
+                        <div class="col-xl-12">
+                            <label>  {{'Notes' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <textarea #Notes="ngModel" name="Notes" class="form-control" type="text" required [(ngModel)]="item.Notes"
+                                    autofocus ></textarea>
+                            </div>
+                            <div *ngIf="Notes.invalid && (Notes.dirty || Notes.touched)" class="alert alert-danger">
+                                <div *ngIf="Notes.errors.required">
+                                      {{'Notes is required.' | translate}}
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">  {{'Save' | translate}}
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

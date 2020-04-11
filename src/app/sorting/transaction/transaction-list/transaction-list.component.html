@@ -1,0 +1,124 @@
+<div class="col col-sm-12">
+  <div class="card mb-3">
+    <div class="card-header">{{'Transaction' | translate}}</div> 
+    <div class="card-body">
+      <table datatable [dtOptions]="dtOptions2" class="row-border hover">
+       <thead>
+          <tr>
+            <th class="text-center ">{{'Code' | translate}}</th>
+            <th class="text-center">{{'Organization' | translate}}</th>
+            <th class="text-center">{{'Vendor' | translate}}</th>
+            <th class="text-center">{{'Courier' | translate}}</th>
+            <th class="text-center">{{'Customer' | translate}}</th>
+            <!-- <th class="text-center">  {{'Transaction Date' | translate}}</th> -->
+            <th class="text-center none" [hidden]="isDelivered"><span> {{'Return Reason' | translate}}</span></th>
+            <th class="text-center none" [hidden]="isDelivered"><span> {{'Notes' | translate}}</span></th>
+            <th class="text-center none" [hidden]="!isDelivered"><span>  {{'Delivered Person' | translate}}</span></th>
+            <th class="text-center none" [hidden]="!isDelivered"><span>  {{'ID Types' | translate}}</span></th>
+            <th class="text-center none" [hidden]="!isDelivered"><span>  {{'ID Number' | translate}}</span></th>
+          </tr>
+        </thead>
+          <tbody>
+          <tr *ngFor="let _item of list">
+            <td class="text-center">{{ _item.Code }}</td>
+            <td class="text-center">{{ _item.Organization?.Name }}</td>
+            <td class="text-center">{{ _item.Vendor?.Name }}</td>
+            <td class="text-center">{{ _item.Courier?.Name }}</td>
+            <td class="text-center">
+              <button class="btn btn-link" type="button" (click)="openModal(content, 1, _item.Customer.ID)">
+                {{ _item.Customer?.Name }}
+              </button>
+            </td>
+            <!-- <td class="text-center">
+              <button class="btn btn-link" type="button" (click)="openModal(content, 2, _item.ID)">
+                {{
+                  _item.Transaction.TransactionDt
+                }}
+              </button>
+            </td> -->
+            <td class="text-center" [hidden]="isDelivered">
+              <angular2-multiselect
+                name="ReturnReason"
+                #ReturnReason="ngModel"
+                required
+                [data]="returnResons"
+                [(ngModel)]="_item.Transaction.DeliveryStatus"
+                [settings]="settings"
+              >
+              </angular2-multiselect>
+            </td>
+            <td class="text-center" [hidden]="isDelivered"><input class="form-control" type="text" [(ngModel)]="_item.Transaction.Notes" /></td>
+
+            <td class="text-center" [hidden]="!isDelivered">
+              <angular2-multiselect
+                name="DeliveryPersons"
+                #DeliveryPersons="ngModel"
+                required
+                [data]="deliverypersons"
+                [(ngModel)]="_item.Transaction.DeliveryStatus"
+                [settings]="settings"
+              >
+              </angular2-multiselect>
+            </td>
+            <td class="text-center" [hidden]="!isDelivered">
+              <angular2-multiselect
+                name="IDType"
+                #IDType="ngModel"
+                required
+                [data]="IDTypes"
+                [(ngModel)]="_item.Transaction.IDType"
+                [settings]="settings"
+              >
+              </angular2-multiselect>
+            </td>
+            <td class="text-center" [hidden]="!isDelivered"><input class="form-control" type="text" [(ngModel)]="_item.Transaction.IDNum" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      <span *ngIf="type === 1">{{'Customer Details' | translate}}</span> <span *ngIf="type === 2">{{'Transaction Details' | translate}}</span>
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group" *ngIf="type === 1">
+        <dl class="dl-horizontal" *ngIf="customer">
+          <dt>{{'Code' | translate}} :</dt>
+          <dd>{{ customer.Code }}</dd>
+          <dt>{{'Name' | translate}} :</dt>
+          <dd>{{ customer.Name }}</dd>
+          <dt>{{'Mail' | translate}} :</dt>
+          <dd>{{ customer.Mail }}</dd>
+          <dt>{{'Mobile' | translate}} :</dt>
+          <dd>{{ customer.Mobile }}</dd>
+          <dt>{{'Addresses' | translate}} :</dt>
+          <dd>{{ customer.CustomerAddresses[0].Address }}</dd>
+        </dl>
+      </div>
+      <div class="form-group" *ngIf="type === 2">
+        <table class="table table-striped">
+          <tr>
+            <th>  {{'Transaction Date' | translate}}</th>
+            <th>  {{'Return Reason' | translate}}</th>
+            <th>Notes</th>
+          </tr>
+          <tr *ngFor="let itm of transactions">
+            <td>{{ formatDate(itm.TransactionDt) }}</td>
+            <td>{{ itm.DeliveryStatus?.Name }}</td>
+            <td>{{ itm.Notes }}</td>
+          </tr>
+        </table>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer"><button type="button" class="btn btn-outline-dark" (click)="modal.close('  Save click')">{{'Close' | translate}}</button></div>
+</ng-template>

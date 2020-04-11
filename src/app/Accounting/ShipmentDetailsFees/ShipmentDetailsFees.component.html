@@ -1,0 +1,278 @@
+<div [@routerTransition]>
+    <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+
+    <div class="row" [hidden]="operation!='view'">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                      {{'Collecting Shipment' | translate}}
+                    <button class="btn btn-sm pull-right btn-success" (click)="open()">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <label>{{'Customers' | translate}}</label>
+                            <div class="form-group">
+                                <angular2-multiselect
+                                 [data]="Cutstomers" 
+                                 [(ngModel)]="selectedItems" 
+                                 [settings]="settings" 
+                                 (onSelect)="onItemSelect($event)"
+                                 (onDeSelect)="OnItemDeSelect($event)" >
+                                </angular2-multiselect>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>{{'Vendors' | translate}}</label>
+                            <div class="form-group">
+                                <angular2-multiselect
+                                 [data]="Vendors" 
+                                 [(ngModel)]="selectedVendors" 
+                                 [settings]="vendorSettings" 
+                                 (onSelect)="onVendorSelect($event)"
+                                 (onDeSelect)="OnVendorDeSelect($event)" >
+                                </angular2-multiselect>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>  {{'Shipment Code' | translate}}</label>
+                            <div class="form-group">
+                                <input 
+                                   #Mobile="ngModel" 
+                                   name="Mobile" 
+                                   class="form-control" 
+                                   type="text"  
+                                   pattern="{{patterns.Alphanumeric}}" 
+                                   [(ngModel)]="searchData.Code"
+                                />    
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>{{'Date From' |translate}}
+                                <!--<span class="text-danger">*</span>-->: </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input 
+                                    class="form-control" 
+                                    placeholder="yyyy-mm-dd" 
+                                    name="dp" 
+                                    [(ngModel)]="searchData.DateFrom" 
+                                    ngbDatepicker  
+                                    #dd="ngbDatepicker"
+                                    FromDT="ngModel" />
+                                    <button class="input-group-addon" (click)="dd.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                                <!--<div *ngIf="FromDT.invalid && (FromDT.dirty || FromDT.touched)" class="alert alert-danger">
+                                    <div *ngIf="FromDT.errors['required']">Date From is required.</div>
+                                </div>-->
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                                <label>{{'Date To' | translate}}
+                                    <!--<span class="text-danger">*</span>-->: </label>
+                                <div class="form-group">
+                                    <div class="input-group datepicker-input">
+                                        <input 
+                                            class="form-control" 
+                                            placeholder="yyyy-mm-dd" 
+                                            name="dp" 
+                                            [(ngModel)]="searchData.DateTo" 
+                                            ngbDatepicker  
+                                            #ddt="ngbDatepicker"
+                                            #ToDT="ngModel" 
+                                        />
+                                        <button class="input-group-addon" (click)="ddt.toggle()" type="button">
+                                            <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                            <span class="fa fa-calendar"></span>
+                                        </button>
+                                    </div>
+                                    <!--<div *ngIf="ToDT.invalid && (ToDT.dirty || ToDT.touched)" class="alert alert-danger">
+                                        <div *ngIf="ToDT.errors['required']">Date To is required.</div>
+                                    </div>-->
+                                </div>
+                        </div>
+                        <div class="col-xl-2" style="margin-top: 32px;">
+                            <button class="btn btn-success" (click)="Search()" type="submit">{{'Submit' | translate}} </button>
+                        </div>
+                        <div class="col-xl-2" style="margin-top: 32px;">
+                            <button type="button" [disabled]="List.length==0" class="btn btn-success btn-xs" (click)="exportAsXLSX()">
+                                <span class="glyphicon glyphicon-upload"></span>   {{'Export' | translate}}
+                            </button>
+                         </div>
+                     
+                        <div class="col-xl-2" style="margin-top: 32px;">
+                                <button [disabled]='checkComfirem()' (click)="ComfirmItems()" class="btn btn-success"  type="submit">{{'Comfirem' | translate}} </button>
+                            </div>
+                        <hr/>
+                    <div class="">
+                        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+                            <thead id="table">
+                                <tr>
+                                    <th class="text-center">{{'Shipment Code' | translate}}</th>
+                                    <th class="text-center">{{'Customer Name' | translate}}</th>
+                                    <th class="text-center">{{'Vendor Name' | translate}}</th>
+                                    <th class="text-center">{{'Shipment Value' | translate}}</th>
+                                    <th class="text-center">{{'Shipment Fees' | translate}}</th>
+                                    <th class="text-center">{{'Shipment Orignal Price' | translate}}</th>
+                                    <th class="text-center">{{'Comfirm shipment' |translate}}</th>
+
+                                    <th class="text-center">{{'Action' |translate}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let _item of List">
+                                    <td class="text-center">{{_item.Shipment.Code}}</td>
+                                    <td class="text-center">{{ _item.Shipment.Customer.Name }}</td>
+                                    <td class="text-center">{{ _item.Shipment.Vendor.Name }}</td>
+                                    <td class="text-center">{{ _item.Shipment.ShipmentValue }}</td>
+                                    <td class="text-center">{{ _item.shipPriceFees }}</td>
+                                    <td class="text-center">{{ _item.shipOriginalPrice }}</td>
+                                    <td class="text-center">
+                                        <input 
+                                            style="height: 20px; margin-top: 4px;"
+                                            [name]="'W'+_item.ID"
+                                            class="form-control" 
+                                            type="checkbox" 
+                                            [(ngModel)]="_item.IsComfirmed"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-success" (click)="open(_item)">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save();" [hidden]="operation=='view'" novalidate>
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <!-- <span [hidden]="operation!='add'">  {{'Add New' | translate}} </span> -->
+                    <span [hidden]="operation!='edit'">{{'Edit' | translate}} </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <label>{{'Shipment Code' | translate}}
+                                <span class="text-danger">*</span>: </label>
+                            <div class="form-group">
+                                <input 
+                                    #Code="ngModel"
+                                    [disabled]="true"
+                                    name="Code"
+                                    class="form-control" 
+                                    type="text" 
+                                    required  
+                                    [(ngModel)]="item?.Shipment.Code "/>
+                            </div>
+                        </div>
+                    
+                    <div class="col-xl-6">
+                        <label>{{'Customer Name' | translate}}
+                            <span class="text-danger">*</span>: </label>
+                        <div class="form-group">
+                            <input 
+                                #Customers_Name="ngModel" 
+                                [disabled]="true" 
+                                name="Customers_Name" 
+                                class="form-control" 
+                                type="text" 
+                                required  
+                                [(ngModel)]="item?.Shipment.Customer.Name"/>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <label>{{'Vendor Name' | translate}}
+                            <span class="text-danger">*</span>: </label>
+                        <div class="form-group">
+                            <input 
+                                #Vendor_Name="ngModel" 
+                                [disabled]="true" 
+                                name="Vendor_Name" 
+                                class="form-control" 
+                                type="text" 
+                                required  
+                                [(ngModel)]="item?.Shipment.Vendor.Name"/>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <label>  {{'Shipment Value' | translate}} <span class="text-danger">*</span>: </label>
+                        <div class="form-group">
+                          <input
+                            #ShipmentValue="ngModel"
+                            name="ShipmentValue"
+                            class="form-control"
+                            type="number"
+                            required
+                            pattern="{{ patterns.Decimal }}"
+                            [(ngModel)]="item?.Shipment.ShipmentValue"
+                          />
+                        </div>
+                        <div *ngIf="ShipmentValue.invalid && (ShipmentValue.dirty || ShipmentValue.touched)" class="alert alert-danger">
+                          <div *ngIf="ShipmentValue.errors['required']">  {{'Shipment Value is required.' | translate}}</div>
+                          <div *ngIf="ShipmentValue.errors['pattern']">  {{'Shipment Value is not valid.' | translate}}</div>
+                        </div>
+                      </div>
+                      <div class="col-xl-6">
+                        <label>  {{'Shipment Original Price' | translate}} <span class="text-danger">*</span>: </label>
+                        <div class="form-group">
+                          <input
+                            #shipOriginalPrice="ngModel"
+                            name="shipOriginalPrice"
+                            class="form-control"
+                            type="number"
+                            required
+                            pattern="{{ patterns.Decimal }}"
+                            [(ngModel)]="item.shipOriginalPrice"
+                          />
+                        </div>
+                        <div *ngIf="shipOriginalPrice.invalid && (shipOriginalPrice.dirty || shipOriginalPrice.touched)" class="alert alert-danger">
+                          <div *ngIf="shipOriginalPrice.errors['required']">  {{'Shipment Value is required.' | translate}}</div>
+                          <div *ngIf="shipOriginalPrice.errors['pattern']">  {{'Shipment Value is not valid.' | translate}}</div>
+                        </div>
+                      </div>
+                      <div class="col-xl-6">
+                        <label>  {{'Shipment Price Fees' | translate}} <span class="text-danger">*</span>: </label>
+                        <div class="form-group">
+                          <input
+                            #shipPriceFees="ngModel"
+                            name="shipPriceFees"
+                            class="form-control"
+                            type="number"
+                            required
+                            pattern="{{ patterns.Decimal }}"
+                            [(ngModel)]="item.shipPriceFees"
+                          />
+                        </div>
+                        <div *ngIf="shipPriceFees.invalid && (shipPriceFees.dirty || shipPriceFees.touched)" class="alert alert-danger">
+                          <div *ngIf="shipPriceFees.errors['required']">  {{'Shipment Price Fees Value is required.' | translate}}</div>
+                          <div *ngIf="shipPriceFees.errors['pattern']">  {{'Shipment Price Fees is not valid.' | translate}}</div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-default" (click)="back();">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}</button>
+                        <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">  {{'Save' | translate}}
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

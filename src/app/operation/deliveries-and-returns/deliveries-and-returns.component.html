@@ -1,0 +1,163 @@
+<div [@routerTransition]>
+    <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+    <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save();" novalidate>
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <label>{{'Date From' |translate}}
+                                <!--<span class="text-danger">*</span>-->: </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="item.DateFrom" ngbDatepicker  #dd="ngbDatepicker"
+                                        #FromDT="ngModel" />
+                                    <button class="input-group-addon" (click)="dd.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                                <!--<div *ngIf="FromDT.invalid && (FromDT.dirty || FromDT.touched)" class="alert alert-danger">
+                                    <div *ngIf="FromDT.errors['required']">Date From is required.</div>
+                                </div>-->
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                                <label>{{'Date To' | translate}}
+                                    <!--<span class="text-danger">*</span>-->: </label>
+                                <div class="form-group">
+                                    <div class="input-group datepicker-input">
+                                        <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="item.DateTo" ngbDatepicker  #ddt="ngbDatepicker"
+                                            #ToDT="ngModel" />
+                                        <button class="input-group-addon" (click)="ddt.toggle()" type="button">
+                                            <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                            <span class="fa fa-calendar"></span>
+                                        </button>
+                                    </div>
+                                    <!--<div *ngIf="ToDT.invalid && (ToDT.dirty || ToDT.touched)" class="alert alert-danger">
+                                        <div *ngIf="ToDT.errors['required']">Date To is required.</div>
+                                    </div>-->
+                                </div>
+                            </div>
+                        <div class="col-xl-4">
+                            <label>{{'Code' |translate}}</label>
+                            <div class="form-group">
+                                <input #Code="ngModel" name="Code" class="form-control" type="text"  pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Code"
+                                    autofocus />
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+                            <label>{{'Name' |translate}}</label>
+
+
+                            <div class="form-group">
+                                <input #NameEn="ngModel" name="NameEn" class="form-control" type="text"  pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.CustmerName"
+                                    autofocus />
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+                            <label>  {{'Address' | translate}}</label>
+
+                            <div class="form-group">
+                                <input #Address="ngModel" name="Address" class="form-control" type="text"  pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Address"
+                                    autofocus />
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+                            <label>  {{'Phone Number' | translate}}</label>
+
+                            <div class="form-group">
+                                <input #Mobile="ngModel" name="Mobile" class="form-control" type="text"  pattern="{{patterns.Alphanumeric}}" [(ngModel)]="item.Mobile"
+                                    autofocus />
+                            </div>
+
+                        </div>
+                        <div class="col-xl-4">
+                            <label>{{'Shipment Date' |translate}}
+                               </label>
+                            <div class="form-group">
+                                <div class="input-group datepicker-input">
+                                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" [(ngModel)]="item.ShipmentDt" ngbDatepicker  #d="ngbDatepicker"
+                                        #ShipmentDt="ngModel" />
+                                    <button class="input-group-addon" (click)="d.toggle()" type="button">
+                                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                                        <span class="fa fa-calendar"></span>
+                                    </button>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <label>
+                                {{'state' |translate}}
+                             </label>
+                            <div style="padding-top: 5px" class="form-group">
+                                <label class="">
+                                                    <input type="radio" name="options" id="option1" value="D" 
+                                                    [(ngModel)]="sinImputarValue"> {{'Deliveries' | translate}}
+                                </label>
+                                &nbsp;
+                                <label class="">
+                                                    <input type="radio" name="options" id="option2" value="R" 
+                                                    [(ngModel)]="sinImputarValue">   {{'Returns' | translate}}
+                                </label>
+                                &nbsp;
+                                <label class="">
+                                                    <input type="radio" name="options" id="option3" value="B" 
+                                                    [(ngModel)]="sinImputarValue">   {{'Both' | translate}}
+                                </label>
+                                &nbsp;
+                            </div>          
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <div class="text-right">
+                                    <button class="btn btn-success" style="margin-top: 30px"  [disabled]="detailsForm.invalid" type="submit">
+                                        {{'Search' | translate}}
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                           </div>          
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                   
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="card">
+
+            <div id="user"  class="popup card-body">
+                <div class="details">
+                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+                        <thead id="table">
+                            <tr>
+                                <th class="text-center">{{'Code' | translate}}</th>
+                                <th class="text-center">  {{'Shipment Value' | translate}}</th>
+                                <th class="text-center">{{'Shipment Date' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let _item of list">
+                                <td class="text-center">{{_item.Code}}</td>
+                                <td class="text-center">{{_item.ShipmentValue}}</td>
+                                <td class="text-center" >{{_item.ShipmentDt.day}} - {{_item.ShipmentDt.month}}  -{{_item.ShipmentDt.year}} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+           </div>
+            <div class="card-footer">
+                            <div class="text-right">
+                                <button class="btn btn-success" type="button" (click)="print()">  {{'Print' | translate}}
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+        </div>
+</div>

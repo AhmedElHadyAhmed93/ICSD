@@ -1,0 +1,162 @@
+<div [@routerTransition]>
+  <!--<app-page-header [heading]="'Makes'" [icon]="'fa-car'"></app-page-header>-->
+  <div class="row" [hidden]="operation != 'view'">
+    <div class="col col-sm-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          Users <button class="btn btn-sm pull-right btn-success" (click)="open()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+            <thead id="table">
+              <tr>
+                <th>User Name</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let _item of list">
+               <td>{{ _item.UserName }}</td>
+               <td>{{ _item.Name }}</td>
+                <td>
+                  <button class="btn btn-sm btn-success" (click)="open(_item)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    mwlConfirmationPopover
+                    popoverTitle="Confirm Delete ?"
+                    (confirm)="delete(_item)"
+                    cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>"
+                    confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>"
+                  >
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save()" [hidden]="operation == 'view'" novalidate>
+    <div class="col col-sm-12" *ngIf="item">
+      <div class="card mb-3">
+        <div class="card-header">
+          <span [hidden]="operation != 'add'">إضافة جديد</span> <span [hidden]="operation != 'edit'">تعديل {{ item?.Name }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+         
+            <div class="col-xl-6">
+              <label>الإسم <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #Name="ngModel"
+                  name="Name"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{ patterns.TextEn }}"
+                  [(ngModel)]="item.Name"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="Name.invalid && (Name.dirty || Name.touched)" class="alert alert-danger">
+                <div *ngIf="Name.errors['required']">يجب إدخال الأسم </div>
+                <div *ngIf="Name.errors['pattern']">الأسم غير صحيح</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label class="switcher-success">User Name <span class="text-danger">*</span> </label>
+              <input
+              #UserName="ngModel"
+              name="UserName"
+              class="form-control"
+              type="text"
+              required
+              pattern="{{ patterns.TextEn }}"
+              [(ngModel)]="item.UserName"
+              autofocus
+            />
+              <div *ngIf="UserName.invalid && (UserName.dirty || UserName.touched)" class="alert alert-danger">
+                <div *ngIf="UserName.errors['required']">يجب إدخال الأسم </div>
+                <div *ngIf="UserName.errors['pattern']">الأسم غير صحيح</div>
+              </div>
+          </div>
+          </div>
+<div class="row">
+  <div class="col-md-6">
+                                        
+    <label class="switcher-success">Password <span class="text-danger">*</span></label>
+  
+    <input
+    #Password="ngModel"
+    name="Password"
+    class="form-control"
+    type="password"
+    required
+    pattern="{{ patterns.PasswordUser }}"
+    [(ngModel)]="item.Password"
+    autofocus
+  />
+    
+  <div *ngIf="Password.invalid && (Password.dirty || Password.touched)" class="alert alert-danger">
+    <div *ngIf="Password.errors['required']">يجب إدخال الأسم </div>
+    <div *ngIf="Password.errors['pattern']">الأسم غير صحيح</div>
+  </div>
+</div>
+<div class="col-md-6" id="confirmPassword">
+    <label class="switcher-success"> Confirm Password <span class="text-danger">*</span> </label><br />
+    
+    <input
+    #ConfirmPassword="ngModel"
+    name="ConfirmPassword"
+    class="form-control"
+    type="password"
+    required
+    pattern="{{ patterns.PasswordUser }}"
+    [(ngModel)]="item.ConfirmPassword"
+    autofocus
+  />
+  <div *ngIf="ConfirmPassword.invalid && (ConfirmPassword.dirty || ConfirmPassword.touched)" class="alert alert-danger">
+    <div *ngIf="ConfirmPassword.errors['required']">يجب إدخال الأسم </div>
+    <div *ngIf="ConfirmPassword.errors['pattern']">الأسم غير صحيح</div>
+  </div>
+    
+</div>
+
+</div>
+          <div class="row">
+            <div class="col-md-12">
+
+
+                <fieldset>
+                  <legend>Roles</legend>
+                  <div class="row">
+                      <div *ngFor="let role of Roles; let i = index;">
+                        <!-- <input type="checkbox" name="role{{role.id}}"   [checked]="role.checked" (change)="roleChanged(i,role.checked)">-->
+                          <input type="checkbox" name="role{{role.id}}" #role{{role.id}}="ngModel"  value="{{role.checked}}" [(ngModel)]="Roles[i].checked">
+                          <label for="role{{role.id}}">{{role.NameEn}}</label>
+                        </div>
+                  </div>
+                </fieldset>
+             
+            </div>
+
+        </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-right">
+            <button type="button" class="btn btn-default" (click)="back()">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i> رجوع 
+            </button>
+            <button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">
+              حفظ <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

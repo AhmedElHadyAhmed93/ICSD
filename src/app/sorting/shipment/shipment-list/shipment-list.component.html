@@ -1,0 +1,80 @@
+<div class="col col-sm-12">
+  <div class="card mb-3">
+    <div class="card-header">
+      {{'Shipment' |translate}} <button class="btn btn-sm pull-right btn-success" (click)="open()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="card-body">
+      
+      <div class="form-group row col-md-4 offset-4">
+        <div class="custom-file">
+          <input ng2FileSelect [uploader]="uploader" type="file" multiple class="form-control custom-file-input" >
+          <label class="custom-file-label"> choose File...</label>
+        </div>
+        <table>
+          <tr *ngFor="let item of uploader.queue">
+            <td class="text-center"><strong>{{ item?.file?.name }}</strong></td>
+            <td *ngIf="uploader.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+            <td *ngIf="uploader.isHTML5">
+                <div class="progress" style="margin-bottom: 0;">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                </div>
+            </td>
+            <td class="text-center">
+                <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+            </td>
+            <td nowrap>
+                <button type="button" class="btn btn-success btn-xs"
+                        (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                    <span class="glyphicon glyphicon-upload"></span>   {{'Upload' | translate}}
+                </button>
+             
+                
+            </td>
+        </tr>  
+      </table>
+    </div>
+
+
+       
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+        <thead id="table">
+          <tr>
+            <th class="text-center">{{'Code' | translate}}</th>
+            <th class="text-center">{{'Organization' | translate}}</th>
+            <th class="text-center">{{'Vendor' | translate}}</th>
+            <th class="text-center">{{'Customers' | translate}}</th>
+            <th class="text-center">  {{'Shipment Value' | translate}}</th>
+            <th class="text-center">{{'Shipment Date' | translate}}</th>
+            <th class="text-center">{{'Action' | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let _item of list">
+            <td class="text-center">{{ _item.Code }}</td>
+            <td class="text-center">{{ _item.Organization?.Name }}</td>
+            <td class="text-center">{{ _item.Vendor?.Name }}</td>
+            <td class="text-center">{{ _item.Customer?.Name }}</td>
+            <td class="text-center">{{ _item.ShipmentValue }}</td>
+            <td class="text-center">{{ _item.ShipmentDt.year + '/' + _item.ShipmentDt.month + '/' + _item.ShipmentDt.day }}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-success" (click)="open(_item)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+              &nbsp; &nbsp;<button
+                class="btn btn-sm btn-danger"
+                mwlConfirmationPopover
+                popoverTitle="Confirm Delete ?"
+                (confirm)="delete(_item.ID)"
+                cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>"
+                confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>"
+              >
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

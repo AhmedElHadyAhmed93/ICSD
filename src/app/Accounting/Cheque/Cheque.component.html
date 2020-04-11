@@ -1,0 +1,373 @@
+<div [@routerTransition]>
+  <!--<app-page-header [heading]="'s'" [icon]="'fa-car'"></app-page-header>-->
+  <div class="row" [hidden]="operation != 'view'">
+    <div class="col col-sm-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          {{'Cheque' | translate}} <button class="btn btn-sm pull-right btn-success" (click)="open()"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        <div class="card-body">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped row-border hover">
+            <thead id="table">
+              <tr>
+                <th class="text-center">{{'Code' | translate}}</th>
+                <th class="text-center">{{'Amount' | translate}}</th>
+                <th class="text-center">{{'Action' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let _item of list">
+                <td class="text-center">{{ _item.Code }}</td>
+                <td class="text-center">{{ _item.Amount }}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-success" (click)="open(_item)"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                  &nbsp; &nbsp;<button
+                    class="btn btn-sm btn-danger"
+                    mwlConfirmationPopover
+                    popoverTitle="Confirm Delete ?"
+                    (confirm)="delete(_item)"
+                    cancelText="No <i class='fa fa-ban' aria-hidden='true'></i>"
+                    confirmText="Yes <i class='fa fa-check' aria-hidden='true'></i>">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form name="detailsForm" #detailsForm="ngForm" class="row" (ngSubmit)="save()" [hidden]="operation == 'view'" novalidate>
+    <div class="col col-sm-12" *ngIf="item">
+      <div class="card mb-3">
+        <div class="card-header">
+          <span [hidden]="operation != 'add'">  {{'Add New' | translate}}</span> <span [hidden]="operation != 'edit'">Edit {{ item?.Name }}</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-6">
+              <label>{{'Code' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #Code="ngModel"
+                  name="Code"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{ patterns.Alphanumeric }}"
+                  [(ngModel)]="item.Code"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="Code.invalid && (Code.dirty || Code.touched)" class="alert alert-danger">
+                <div *ngIf="Code.errors['required']">{{'Code is required.' | translate}}</div>
+                <div *ngIf="Code.errors['pattern']">{{'Code is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>{{'Amount' | translate}}<span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #Amount="ngModel"
+                  name="Amount"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{ patterns.Decimal}}"
+                  [(ngModel)]="item.Amount"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="Amount.invalid && (Amount.dirty || Amount.touched)" class="alert alert-danger">
+                <div *ngIf="Amount.errors['required']">  {{'Amount is required.' | translate}}</div>
+                <div *ngIf="Amount.errors['pattern']">  {{'Amount is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <label>  {{'Description' | translate}} <span class="text-danger">*</span>: </label>
+              <div class="form-group">
+                <input
+                  #Description="ngModel"
+                  name="Description"
+                  class="form-control"
+                  type="text"
+                  required
+                  pattern="{{patterns.Alphanumeric}}"
+                  [(ngModel)]="item.Description"
+                  autofocus
+                />
+              </div>
+              <div *ngIf="Description.invalid && (Description.dirty || Description.touched)" class="alert alert-danger">
+                <div *ngIf="Description.errors['required']">{{'Description is required.' | translate}}</div>
+                <div *ngIf="Description.errors['pattern']">{{'Description is not valid.' | translate}}</div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+                <label>{{'Send For Collection Date' | translate}} <span class="text-danger">*</span>: </label>
+                <div class="form-group">
+                  <div class="input-group datepicker-input">
+                    <input
+                      class="form-control"
+                      placeholder="yyyy-mm-dd"
+                      name="SendForCollectionDate"
+                      [(ngModel)]="item.SendForCollectionDate"
+                      ngbDatepicker
+                      required
+                      #d="ngbDatepicker"
+                      #SendForCollectionDate="ngModel"
+                    />
+                    <button class="input-group-addon" (click)="d.toggle()" type="button">
+                      <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                      <span class="fa fa-calendar"></span>
+                    </button>
+                  </div>
+                  <div *ngIf="SendForCollectionDate.invalid && (SendForCollectionDate.dirty || SendForCollectionDate.touched)" class="alert alert-danger">
+                    <div *ngIf="SendForCollectionDate.errors['required']">  {{'Send For Collection Date is required.' | translate}}</div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                  <label>{{'Collected Date' | translate}} <span class="text-danger">*</span>: </label>
+                  <div class="form-group">
+                    <div class="input-group datepicker-input">
+                      <input
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="CollectedDate"
+                        [(ngModel)]="item.CollectedDate"
+                        ngbDatepicker
+                        required
+                        #d1="ngbDatepicker"
+                        #CollectedDate="ngModel"
+                      />
+                      <button class="input-group-addon" (click)="d1.toggle()" type="button">
+                        <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                        <span class="fa fa-calendar"></span>
+                      </button>
+                    </div>
+                    <div *ngIf="CollectedDate.invalid && (CollectedDate.dirty || CollectedDate.touched)" class="alert alert-danger">
+                      <div *ngIf="CollectedDate.errors['required']">  {{'Collection Date is required.' | translate}}</div>
+                    </div>
+                  </div>
+            </div>
+            <div class="col-xl-6" *ngIf="item.Status==4">
+                    <label>{{'Refusal Date' | translate}} <span class="text-danger">*</span>: </label>
+                    <div class="form-group">
+                      <div class="input-group datepicker-input">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="RefusalDate"
+                          [(ngModel)]="item.RefusalDate"
+                          ngbDatepicker
+                          required
+                          #d2="ngbDatepicker"
+                          #RefusalDate="ngModel"
+                        />
+                        <button class="input-group-addon" (click)="d2.toggle()" type="button">
+                          <!-- <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/> -->
+                          <span class="fa fa-calendar"></span>
+                        </button>
+                      </div>
+                      <div *ngIf="RefusalDate.invalid && (RefusalDate.dirty || RefusalDate.touched)" class="alert alert-danger">
+                        <div *ngIf="RefusalDate.errors['required']">  {{'Refusal Date is required.' | translate}}</div>
+                      </div>
+                    </div>
+            </div>
+            <div class="col-xl-6" *ngIf="item.Status==4">
+                <label>  {{'Refusal Reason' | translate}} <span class="text-danger">*</span>: </label>
+                <div class="form-group">
+                  <input
+                    #RefusalReason="ngModel"
+                    name="RefusalReason"
+                    class="form-control"
+                    type="text"
+                    required
+                    pattern="{{ patterns.TextAr }}"
+                    [(ngModel)]="item.RefusalReason"
+                    autofocus
+                  />
+                </div>
+                <div *ngIf="RefusalReason.invalid && (RefusalReason.dirty || RefusalReason.touched)" class="alert alert-danger">
+                  <div *ngIf="RefusalReason.errors['required']">{{'Refusal Reason is required.' | translate}}</div>
+                  <div *ngIf="RefusalReason.errors['pattern']">{{'Refusal Reason is not valid.' | translate}}</div>
+                </div>
+            </div>
+            
+            <div class="col-xl-6">
+                <label>{{'Main Bank' | translate}} <span class="text-danger">*</span>: </label>
+                <div class="form-group">
+                    <angular2-multiselect 
+                      name="MainBank"
+                      #MainBank="ngModel"
+                      [data]="MainBanks" 
+                      [(ngModel)]="selectedMainBanks"
+                      [settings]="settings"
+                      (onSelect)="MainBankSelected($event)"
+                      (onDeSelect)="OnMainBankDeSelect($event)">
+                    </angular2-multiselect>
+                </div>
+                <!-- <div *ngIf="(MainBank.dirty || MainBank.touched)" class="alert alert-danger">
+                                      <div *ngIf="MainBank.errors.required">
+                                          {{'Main Bank is required.' | translate}} 
+                                      </div> -->
+                                      
+            </div>
+            <div class="col-xl-6">
+                <label>{{'Branch Bank' | translate}} <span class="text-danger">*</span>: </label>
+                <div class="form-group">
+                    <angular2-multiselect 
+                    name="BranchBank"
+                    #BranchBank="ngModel"
+                    [data]="BranchBanks" 
+                    [(ngModel)]="selectedBranchBanks"
+                    [settings]="settings">
+                    </angular2-multiselect>
+                  
+                </div>
+                <div *ngIf="BranchBank.invalid && (BranchBank.dirty || BranchBank.touched)" class="alert alert-danger">
+                                          <div *ngIf="BranchBank.errors.required">
+                                          {{'Branch Bank is required.' | translate}} 
+                </div>
+              </div>
+
+            </div>
+            <div class="col-xl-6">
+                  <label>{{'Main Account' | translate}} <span class="text-danger">*</span>: </label>
+                  <div class="form-group">
+                      <angular2-multiselect 
+                        name="MainAccount"
+                        #MainAccount="ngModel"
+                        [data]="MainAccounts" 
+                        [(ngModel)]="selectedMainAccounts"
+                        [settings]="settings"
+                        (onSelect)="MainAccountSelected($event)"
+                        (onDeSelect)="OnMainAccountDeSelect($event)">
+                      </angular2-multiselect>
+                  </div>
+                   <!-- <div *ngIf="MainAccount.invalid && (MainAccount.dirty || MainAccount.touched)" class="alert alert-danger">
+                                        <div *ngIf="MainAccount.errors.required">
+                                          {{'Main Account is required.' | translate}} 
+                                        </div>
+                                    </div> -->
+            </div>
+            <div class="col-xl-6">
+                    <label>{{'Branch Account' | translate}} <span class="text-danger">*</span>: </label>
+                    <div class="form-group">
+                        <angular2-multiselect 
+                        name="BranchAccount"
+                        #BranchAccount="ngModel"
+                        [data]="BranchAccounts" 
+                        [(ngModel)]="selectedBranchAccounts"
+                        [settings]="settings">
+                        </angular2-multiselect>
+                    </div>
+                    <!-- <div *ngIf="BranchAccount.invalid && (BranchAccount.dirty || BranchAccount.touched)" class="alert alert-danger">
+                          <div *ngIf="BranchAccount.errors.required">
+                              {{'Customer is required.' | translate}} 
+                          </div>
+                    </div> -->
+            </div>
+            <div class="col-xl-6">
+                <label>{{'Status' | translate}} <span class="text-danger">*</span>: </label>
+                <div class="form-group">
+                    <angular2-multiselect 
+                    name="Status"
+                    #status="ngModel"
+                    [data]="Status" 
+                    [(ngModel)]="selectedStatus"
+                    [settings]="settings"
+                    (onSelect)="StatusSelected($event)"
+                    (onDeSelect)="OnStatusDeSelect($event)">
+                    </angular2-multiselect>
+                </div>
+                <!-- <div *ngIf="BranchAccount.invalid && (BranchAccount.dirty || BranchAccount.touched)" class="alert alert-danger">
+                      <div *ngIf="BranchAccount.errors.required">
+                          {{'Customer is required.' | translate}} 
+                      </div>
+                </div> -->
+            </div>
+            <div class="col-xl-6" *ngIf="ChequeType==2">
+                    <label>{{'Customer' | translate}} <span class="text-danger">*</span>: </label>
+                    <div class="form-group">
+                        <angular2-multiselect 
+                        name="Customer"
+                        #Customer="ngModel"
+                        [data]="Customers" 
+                        [(ngModel)]="CustomerSelected"
+                        [settings]="settings"
+                        (onSelect)="OnCustomerSelected($event)"
+                        (onDeSelect)="OnCustomerDeSelect($event)">
+                        </angular2-multiselect>
+                    </div>
+                    <!-- <div *ngIf="Customer.invalid && (Customer.dirty || Customer.touched)" class="alert alert-danger">
+                          <div *ngIf="Customer.errors.required">
+                              {{'Customer is required.' | translate}} 
+                          </div>
+                    </div> -->
+            </div>
+            <div class="col-xl-6" *ngIf="ChequeType==1">
+                    <label>{{'Vendors' | translate}} <span class="text-danger">*</span>: </label>
+                    <div class="form-group">
+                        <angular2-multiselect 
+                        name="Vendor"
+                        #Vendor="ngModel"
+                        [data]="Vendors" 
+                        [(ngModel)]="selectedVendors"
+                        [settings]="settings"
+                        (onSelect)="VendorSelected($event)"
+                        (onDeSelect)="OnVendorDeSelect($event)">
+                        </angular2-multiselect>
+                    </div>
+                    <!-- <div *ngIf="Vendor.invalid && (Vendor.dirty || Vendor.touched)" class="alert alert-danger">
+                          <div *ngIf="Vendor.errors.required">
+                              {{'Vendor is required.' | translate}} 
+                          </div>
+                    </div> -->
+            </div>
+            <div class="col-xl-4">
+                    <label>
+                        {{'Cheque Type' |translate}}
+                     </label>
+                    <div style="padding-top: 5px" class="form-group">
+                        <label class="">
+                                            <input type="radio" name="options" id="option1" [value]="1" 
+                                            [(ngModel)]="item.ChequeType"> {{'Debit' | translate}}
+                        </label>
+                        &nbsp;
+                        <label class="">
+                                            <input type="radio" name="options" id="option2" [value]="2" 
+                                            [(ngModel)]="item.ChequeType">   {{'Credit' | translate}}
+                        </label>
+                    </div>          
+            </div>  
+            <div class="col-xl-4">
+                    <div style="padding-top: 5px" class="form-group">
+                                           <label class="">
+                                            <input (click)="GetPartner()" type="radio" name="options1" id="option3" [value]="1" 
+                                            [(ngModel)]="ChequeType"> {{'Vendor' | translate}}
+                        </label>
+                        &nbsp;
+                        <label class="">
+                                            <input (click)="GetPartner()" type="radio" name="options1" id="option4" [value]="2" 
+                                            [(ngModel)]="ChequeType">   {{'Customer' | translate}}
+                        </label> 
+                    </div>          
+            </div>  
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="text-right">
+            <button type="button" class="btn btn-default" (click)="back()">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i> {{'Back' | translate}}
+            </button>
+            &nbsp; &nbsp;<button class="btn btn-success" [disabled]="detailsForm.invalid" type="submit">
+                {{'Save' | translate}} <i class="fa fa-floppy-o" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
