@@ -41,7 +41,7 @@
     "ng2-input-autocomplete": "0.2.1",
     "primeng": "7.0.5",
     "rxjs": "6.3.3",
-    "xlsx": "^0.15.5",
+    "xlsx": "^0.17.0",
     "yarn": "1.12.1",
     "zone.js": "0.8.26"
   },
