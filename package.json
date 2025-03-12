@@ -42,7 +42,7 @@
     "primeng": "7.0.5",
     "rxjs": "6.3.3",
     "xlsx": "^0.15.5",
-    "yarn": "1.12.1",
+    "yarn": "1.22.0",
     "zone.js": "0.8.26"
   },
   "devDependencies": {
