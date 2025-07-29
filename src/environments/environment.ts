@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
- //
- apiURL: 'http://localhost:54338/api/'
- //  apiURL: 'http://localhost:2020/api/'
-
+  apiUrl: 'https://localhost:7001/api',
+  signalRUrl: 'https://localhost:7001/hubs/notifications',
+  // Legacy API URL (keeping for backward compatibility)
+  apiURL: 'http://localhost:54338/api/'
 };
 
 /*
